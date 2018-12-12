@@ -113,13 +113,9 @@ module sakura_g_brlwe(
   
   
   	reg[7:0]cnt=0;
-  	reg[20:0]cnt_c1;
-  	reg[20:0]cnt_c2;
 	reg load_data_in;
 	reg load_data_in_d1;
-	reg r2_data_in;
-	reg [7:0] c1_data_in;
-	reg [7:0] c2_data_in;
+	reg m_data_in;
 	
    always @ (posedge clock or negedge resetn)
 	begin
@@ -146,13 +142,13 @@ module sakura_g_brlwe(
 	
 	always @ (posedge clock)
 	begin
-		r2_data_in<=key[cnt];
-		c1_data_in<=text_in[(cnt*8+2048)+:8];
-		c2_data_in<=text_in[cnt*8+:8];
+		m_data_in<=key[cnt];
 	end
 	
 	always @ (posedge clock)
+	begin
 		load_data_in_d1<=load_data_in;
+	end
 	
 	wire start_pulse;
 	assign start_pulse=(~load_data_in)&load_data_in_d1;
@@ -167,21 +163,25 @@ module sakura_g_brlwe(
 			busy<=0;
 	end
 	
-	reg [255:0]text_out;
-	reg [7:0]cnt_out;
-	always @ (posedge clock or negedge resetn)
-	begin
-		if (resetn==0)
-		begin
-			text_out<=0;
-			cnt_out<=0;
-		end
-		else if (valid)
-		begin
-			cnt_out<=cnt_out+1;
-			text_out[cnt_out]<=message_out;
-		end		
-	end
+	//reg [2047:0] text_out;
+
+	//reg [7:0]cnt_out;
+	//always @ (posedge clock or negedge resetn)
+	//begin
+	//	if (resetn==0)
+	//	begin
+	//		text_out<=0;
+	//		cnt_out<=0;
+	//	end
+	//	else if (valid)
+	//	begin
+	//		cnt_out<=cnt_out+1;
+	//		for(i=0;i<256;i++)
+	//		begin
+	//			text_out[i]<=m_out[i];
+	//		end
+	//	end		
+	//end
 	
   
   ////////////////////
@@ -196,7 +196,7 @@ module sakura_g_brlwe(
     .HRE( lbus_re ), .HWE( lbus_we ), .HDIN( lbus_wd ), .HDOUT( lbus_rd ),
     .ENCn_DEC( enc_dec ), .KEY_GEN( key_exp ), .DATA_EN( start ),
     .KVAL( key_val ), .TVAL( text_val ),
-    .KEY_OUT( key ), .DATA_OUT( text_in ), .RESULT( text_out )
+    .KEY_OUT( key ), .DATA_OUT( text_in ), .RESULT(m_out)
   );
 
   assign lbus_aful = 1'b1;
@@ -206,15 +206,13 @@ module sakura_g_brlwe(
   // ------------------------------------------------------------------------------
   // AES unit
   // ------------------------------------------------------------------------------
-  wire message_out;
+  //wire [2047:0] m_out;
   BRLWE brlwe_unit (
     .clk( clock ),.resetn( resetn ), 
 	 .load(load_data_in_d1),
 	 .start( start_pulse ),
-    .r2_in( r2_data_in ),
-	 .c1_in (c1_data_in),
-	 .c2_in(c2_data_in),
-    .message_out( message_out ),
+    	.m_in( m_data_in ),
+    	.m_out( m_out ),
 	 .valid(valid)
   );
 	

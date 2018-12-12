@@ -20,7 +20,7 @@ module host_if(
   input          TVAL,
   output [255:0]  KEY_OUT,  // Cipher key output
   output [4095:0] DATA_OUT, // Cipher Text or Inverse Cipher Text output
-  input  [255:0] RESULT    // Cipher Text or Inverse Cipher Text input
+  input  [2047:0] RESULT    // Cipher Text or Inverse Cipher Text input
 );
 
 
@@ -718,26 +718,140 @@ module host_if(
   // Read data multiplax
   always @( addr_reg or rst or enc_dec or key_gen or data_ena or KVAL or TVAL or RESULT ) begin
     case( addr_reg )
-      16'h0002: dout_mux = { 13'h0000, rst, key_gen, data_ena };
-      16'h000c: dout_mux = { KVAL, TVAL, enc_dec };
-      
-      16'h0360: dout_mux = RESULT[255:240];
-      16'h0362: dout_mux = RESULT[239:224];
-      16'h0364: dout_mux = RESULT[223:208];
-      16'h0366: dout_mux = RESULT[207:192];
-      16'h0368: dout_mux = RESULT[191:176];
-      16'h036a: dout_mux = RESULT[175:160];
-      16'h036c: dout_mux = RESULT[159:144];
-      16'h036e: dout_mux = RESULT[143:128];		
-      16'h0370: dout_mux = RESULT[127:112];
-      16'h0372: dout_mux = RESULT[111:96];
-      16'h0374: dout_mux = RESULT[95:80];
-      16'h0376: dout_mux = RESULT[79:64];
-      16'h0378: dout_mux = RESULT[63:48];
-      16'h037a: dout_mux = RESULT[47:32];
-      16'h037c: dout_mux = RESULT[31:16];
-      16'h037e: dout_mux = RESULT[15:0];
-      16'hfffc: dout_mux = 16'h4522;
+      	16'h0002: dout_mux = { 13'h0000, rst, key_gen, data_ena };
+      	16'h000c: dout_mux = { KVAL, TVAL, enc_dec };
+
+	16'h0360:    dout_mux = RESULT[2047:2032];
+	16'h0362:    dout_mux = RESULT[2031:2016];
+	16'h0364:    dout_mux = RESULT[2015:2000];
+	16'h0366:    dout_mux = RESULT[1999:1984];
+	16'h0368:    dout_mux = RESULT[1983:1968];
+	16'h036A:    dout_mux = RESULT[1967:1952];
+	16'h036C:    dout_mux = RESULT[1951:1936];
+	16'h036E:    dout_mux = RESULT[1935:1920];
+	16'h0370:    dout_mux = RESULT[1919:1904];
+	16'h0372:    dout_mux = RESULT[1903:1888];
+	16'h0374:    dout_mux = RESULT[1887:1872];
+	16'h0376:    dout_mux = RESULT[1871:1856];
+	16'h0378:    dout_mux = RESULT[1855:1840];
+	16'h037A:    dout_mux = RESULT[1839:1824];
+	16'h037C:    dout_mux = RESULT[1823:1808];
+	16'h037E:    dout_mux = RESULT[1807:1792];
+	16'h0380:    dout_mux = RESULT[1791:1776];
+	16'h0382:    dout_mux = RESULT[1775:1760];
+	16'h0384:    dout_mux = RESULT[1759:1744];
+	16'h0386:    dout_mux = RESULT[1743:1728];
+	16'h0388:    dout_mux = RESULT[1727:1712];
+	16'h038A:    dout_mux = RESULT[1711:1696];
+	16'h038C:    dout_mux = RESULT[1695:1680];
+	16'h038E:    dout_mux = RESULT[1679:1664];
+	16'h0390:    dout_mux = RESULT[1663:1648];
+	16'h0392:    dout_mux = RESULT[1647:1632];
+	16'h0394:    dout_mux = RESULT[1631:1616];
+	16'h0396:    dout_mux = RESULT[1615:1600];
+	16'h0398:    dout_mux = RESULT[1599:1584];
+	16'h039A:    dout_mux = RESULT[1583:1568];
+	16'h039C:    dout_mux = RESULT[1567:1552];
+	16'h039E:    dout_mux = RESULT[1551:1536];
+	16'h03A0:    dout_mux = RESULT[1535:1520];
+	16'h03A2:    dout_mux = RESULT[1519:1504];
+	16'h03A4:    dout_mux = RESULT[1503:1488];
+	16'h03A6:    dout_mux = RESULT[1487:1472];
+	16'h03A8:    dout_mux = RESULT[1471:1456];
+	16'h03AA:    dout_mux = RESULT[1455:1440];
+	16'h03AC:    dout_mux = RESULT[1439:1424];
+	16'h03AE:    dout_mux = RESULT[1423:1408];
+	16'h03B0:    dout_mux = RESULT[1407:1392];
+	16'h03B2:    dout_mux = RESULT[1391:1376];
+	16'h03B4:    dout_mux = RESULT[1375:1360];
+	16'h03B6:    dout_mux = RESULT[1359:1344];
+	16'h03B8:    dout_mux = RESULT[1343:1328];
+	16'h03BA:    dout_mux = RESULT[1327:1312];
+	16'h03BC:    dout_mux = RESULT[1311:1296];
+	16'h03BE:    dout_mux = RESULT[1295:1280];
+	16'h03C0:    dout_mux = RESULT[1279:1264];
+	16'h03C2:    dout_mux = RESULT[1263:1248];
+	16'h03C4:    dout_mux = RESULT[1247:1232];
+	16'h03C6:    dout_mux = RESULT[1231:1216];
+	16'h03C8:    dout_mux = RESULT[1215:1200];
+	16'h03CA:    dout_mux = RESULT[1199:1184];
+	16'h03CC:    dout_mux = RESULT[1183:1168];
+	16'h03CE:    dout_mux = RESULT[1167:1152];
+	16'h03D0:    dout_mux = RESULT[1151:1136];
+	16'h03D2:    dout_mux = RESULT[1135:1120];
+	16'h03D4:    dout_mux = RESULT[1119:1104];
+	16'h03D6:    dout_mux = RESULT[1103:1088];
+	16'h03D8:    dout_mux = RESULT[1087:1072];
+	16'h03DA:    dout_mux = RESULT[1071:1056];
+	16'h03DC:    dout_mux = RESULT[1055:1040];
+	16'h03DE:    dout_mux = RESULT[1039:1024];
+	16'h03E0:    dout_mux = RESULT[1023:1008];
+	16'h03E2:    dout_mux = RESULT[1007:992];
+	16'h03E4:    dout_mux = RESULT[991:976];
+	16'h03E6:    dout_mux = RESULT[975:960];
+	16'h03E8:    dout_mux = RESULT[959:944];
+	16'h03EA:    dout_mux = RESULT[943:928];
+	16'h03EC:    dout_mux = RESULT[927:912];
+	16'h03EE:    dout_mux = RESULT[911:896];
+	16'h03F0:    dout_mux = RESULT[895:880];
+	16'h03F2:    dout_mux = RESULT[879:864];
+	16'h03F4:    dout_mux = RESULT[863:848];
+	16'h03F6:    dout_mux = RESULT[847:832];
+	16'h03F8:    dout_mux = RESULT[831:816];
+	16'h03FA:    dout_mux = RESULT[815:800];
+	16'h03FC:    dout_mux = RESULT[799:784];
+	16'h03FE:    dout_mux = RESULT[783:768];
+	16'h0400:    dout_mux = RESULT[767:752];
+	16'h0402:    dout_mux = RESULT[751:736];
+	16'h0404:    dout_mux = RESULT[735:720];
+	16'h0406:    dout_mux = RESULT[719:704];
+	16'h0408:    dout_mux = RESULT[703:688];
+	16'h040A:    dout_mux = RESULT[687:672];
+	16'h040C:    dout_mux = RESULT[671:656];
+	16'h040E:    dout_mux = RESULT[655:640];
+	16'h0410:    dout_mux = RESULT[639:624];
+	16'h0412:    dout_mux = RESULT[623:608];
+	16'h0414:    dout_mux = RESULT[607:592];
+	16'h0416:    dout_mux = RESULT[591:576];
+	16'h0418:    dout_mux = RESULT[575:560];
+	16'h041A:    dout_mux = RESULT[559:544];
+	16'h041C:    dout_mux = RESULT[543:528];
+	16'h041E:    dout_mux = RESULT[527:512];
+	16'h0420:    dout_mux = RESULT[511:496];
+	16'h0422:    dout_mux = RESULT[495:480];
+	16'h0424:    dout_mux = RESULT[479:464];
+	16'h0426:    dout_mux = RESULT[463:448];
+	16'h0428:    dout_mux = RESULT[447:432];
+	16'h042A:    dout_mux = RESULT[431:416];
+	16'h042C:    dout_mux = RESULT[415:400];
+	16'h042E:    dout_mux = RESULT[399:384];
+	16'h0430:    dout_mux = RESULT[383:368];
+	16'h0432:    dout_mux = RESULT[367:352];
+	16'h0434:    dout_mux = RESULT[351:336];
+	16'h0436:    dout_mux = RESULT[335:320];
+	16'h0438:    dout_mux = RESULT[319:304];
+	16'h043A:    dout_mux = RESULT[303:288];
+	16'h043C:    dout_mux = RESULT[287:272];
+	16'h043E:    dout_mux = RESULT[271:256];
+	16'h0440:    dout_mux = RESULT[255:240];
+	16'h0442:    dout_mux = RESULT[239:224];
+	16'h0444:    dout_mux = RESULT[223:208];
+	16'h0446:    dout_mux = RESULT[207:192];
+	16'h0448:    dout_mux = RESULT[191:176];
+	16'h044A:    dout_mux = RESULT[175:160];
+	16'h044C:    dout_mux = RESULT[159:144];
+	16'h044E:    dout_mux = RESULT[143:128];
+	16'h0450:    dout_mux = RESULT[127:112];
+	16'h0452:    dout_mux = RESULT[111:96];
+	16'h0454:    dout_mux = RESULT[95:80];
+	16'h0456:    dout_mux = RESULT[79:64];
+	16'h0458:    dout_mux = RESULT[63:48];
+	16'h045A:    dout_mux = RESULT[47:32];
+	16'h045C:    dout_mux = RESULT[31:16];
+	16'h045E:    dout_mux = RESULT[15:0];
+
+      	16'hfffc: dout_mux = 16'h4522;
+
        default: dout_mux = 16'h0000;
     endcase
   end
