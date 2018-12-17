@@ -98,7 +98,7 @@ module sakura_g_brlwe(
   // ------------------------------------------------------------------------------
   // Triger signals output
   // ------------------------------------------------------------------------------
-  assign M_HEADER[0] = start_pulse;      // trig_startn
+  assign M_HEADER[0] = load_data_in_d1;      // trig_startn
   
   assign M_HEADER[1] = trigger_out1;
   assign M_HEADER[2] = trigger_out2;
@@ -113,9 +113,13 @@ module sakura_g_brlwe(
   
   
   	reg[7:0]cnt=0;
+  	reg[20:0]cnt_c1;
+  	reg[20:0]cnt_c2;
 	reg load_data_in;
 	reg load_data_in_d1;
-	reg m_data_in;
+	reg r2_data_in;
+	reg [7:0] c1_data_in;
+	reg [7:0] c2_data_in;
 	
    always @ (posedge clock or negedge resetn)
 	begin
@@ -142,13 +146,13 @@ module sakura_g_brlwe(
 	
 	always @ (posedge clock)
 	begin
-		m_data_in<=key[cnt];
+		r2_data_in<=key[cnt];
+		c1_data_in<=text_in[(cnt*8+2048)+:8];
+		c2_data_in<=text_in[cnt*8+:8];
 	end
 	
 	always @ (posedge clock)
-	begin
 		load_data_in_d1<=load_data_in;
-	end
 	
 	wire start_pulse;
 	assign start_pulse=(~load_data_in)&load_data_in_d1;
@@ -163,25 +167,21 @@ module sakura_g_brlwe(
 			busy<=0;
 	end
 	
-	//reg [2047:0] text_out;
-
-	//reg [7:0]cnt_out;
-	//always @ (posedge clock or negedge resetn)
-	//begin
-	//	if (resetn==0)
-	//	begin
-	//		text_out<=0;
-	//		cnt_out<=0;
-	//	end
-	//	else if (valid)
-	//	begin
-	//		cnt_out<=cnt_out+1;
-	//		for(i=0;i<256;i++)
-	//		begin
-	//			text_out[i]<=m_out[i];
-	//		end
-	//	end		
-	//end
+	reg [255:0]text_out;
+	reg [7:0]cnt_out;
+	always @ (posedge clock or negedge resetn)
+	begin
+		if (resetn==0)
+		begin
+			text_out<=0;
+			cnt_out<=0;
+		end
+		else if (valid)
+		begin
+			cnt_out<=cnt_out+1;
+			text_out[cnt_out]<= m_out;
+		end		
+	end
 	
   
   ////////////////////
@@ -196,7 +196,7 @@ module sakura_g_brlwe(
     .HRE( lbus_re ), .HWE( lbus_we ), .HDIN( lbus_wd ), .HDOUT( lbus_rd ),
     .ENCn_DEC( enc_dec ), .KEY_GEN( key_exp ), .DATA_EN( start ),
     .KVAL( key_val ), .TVAL( text_val ),
-    .KEY_OUT( key ), .DATA_OUT( text_in ), .RESULT(m_out)
+    .KEY_OUT( key ), .DATA_OUT( text_in ), .RESULT( text_out )
   );
 
   assign lbus_aful = 1'b1;
@@ -206,13 +206,12 @@ module sakura_g_brlwe(
   // ------------------------------------------------------------------------------
   // AES unit
   // ------------------------------------------------------------------------------
-  //wire [2047:0] m_out;
+  wire m_out;
   BRLWE brlwe_unit (
     .clk( clock ),.resetn( resetn ), 
 	 .load(load_data_in_d1),
-	 .start( start_pulse ),
-    	.m_in( m_data_in ),
-    	.m_out( m_out ),
+    .m_in( r2_data_in ),
+    .m_out( m_out ),
 	 .valid(valid)
   );
 	
@@ -234,7 +233,7 @@ module sakura_g_brlwe(
   assign led[2] = enc_dec;
   assign led[3] = key_exp;
   assign led[4] = key_val;
-  assign led[5] = start;
+  assign led[5] = valid;
   assign led[6] = text_val;
   assign led[7] = busy;
   assign led[8] = count[21];
